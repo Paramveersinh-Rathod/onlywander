@@ -1,0 +1,173 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    /* Using the same professional styles from the signup page */
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .login-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin: 2rem 0 4rem 0;
+    }
+
+    .branding-panel {
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1470&auto-format=fit=crop');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 2rem;
+    }
+    
+    .branding-panel .logo {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 700;
+        font-size: 2.2rem;
+    }
+
+    .form-panel {
+        padding: 3rem;
+    }
+
+    .form-panel h2 {
+        font-weight: 700;
+        color: #343a40;
+    }
+
+    .form-panel .sub-heading {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    
+    .form-floating .form-control {
+        height: calc(3.5rem + 2px);
+    }
+    
+    .password-toggle-icon {
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        z-index: 5;
+    }
+
+    .btn-brand {
+        background-color: #fe424d;
+        border: none;
+        color: white;
+        padding: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .btn-brand:hover {
+        background-color: #e03842;
+        color: white;
+    }
+
+    .signup-link a {
+        color: #fe424d;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    /* --- NEW ANIMATION STYLES --- */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-on-load {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    /* ------------------------------ */
+
+</style>
+
+<div class="row d-flex justify-content-center align-items-center min-vh-100 m-0">
+    <div class="col-lg-10 col-xl-9">
+        <div class="card login-card animate-on-load">
+            <div class="row g-0">
+
+                <div class="col-md-5 d-none d-md-flex align-items-center justify-content-center branding-panel">
+                    <div class="text-center">
+                        <h1 class="logo mb-3"><i class="fa-solid fa-plane-departure"></i> OnlyWander</h1>
+                        <p class="lead">Welcome back! Your next adventure awaits.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="form-panel">
+                        <h2>Welcome Back!</h2>
+                        <p class="sub-heading">Log in to continue your journey.</p>
+                        
+                        <form action="/login" method="POST" class="needs-validation form-with-loader" novalidate>
+                            <div class="form-floating mb-3">
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
+                                <label for="username"><i class="fa-solid fa-user me-2"></i>Username</label>
+                                <div class="invalid-feedback">A username is required.</div>
+                            </div>
+                            
+                            <div class="form-floating mb-4 position-relative">
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock me-2"></i>Password</label>
+                                <i class="fa-solid fa-eye password-toggle-icon" id="password-toggle"></i>
+                                <div class="invalid-feedback">A password is required.</div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button class="btn btn-brand">LOG IN</button>
+                            </div>
+
+                            <p class="text-center mt-4 signup-link">
+                                Don't have an account? <a href="/signup">Sign Up</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- SCRIPT FOR PASSWORD TOGGLE ---
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('password-toggle');
+
+        if (passwordToggle) {
+            passwordToggle.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                passwordToggle.classList.toggle('fa-eye');
+                passwordToggle.classList.toggle('fa-eye-slash');
+            });
+        }
+        // ----------------------------------
+
+        // --- SCRIPT FOR BOOTSTRAP VALIDATION ---
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+        // -----------------------------------------
+    });
+</script>

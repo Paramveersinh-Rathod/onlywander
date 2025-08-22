@@ -1,0 +1,461 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+/* All your existing CSS styles remain unchanged */
+.tax-label {
+  display: none;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+.header-row {
+  margin-top: 2rem;
+}
+.filters {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 0;
+  gap: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  opacity: 0.8;
+  flex-grow: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.filters::-webkit-scrollbar {
+  display: none;
+}
+.filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  color: #555;
+  min-width: 80px;
+  padding: 8px 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.2s, border-bottom 0.2s;
+}
+.filter.active {
+  color: #000;
+  border-bottom: 2px solid #000;
+  opacity: 1;
+}
+.filter:hover {
+  color: #000;
+}
+.filter i {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+.filter p {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.controls-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.sort-by-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 1rem;
+  padding: 0.6rem 0.8rem;
+  height: 3.15rem;
+  color: #595d64;
+}
+.sort-by-container label {
+  margin: 0;
+  white-space: nowrap;
+}
+.sort-by-container select {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+}
+.sort-by-container select:focus {
+  outline: none;
+}
+.tax-toggle {
+  border: 1px solid #dee2e6;
+  border-radius: 1rem;
+  height: 3.15rem;
+  padding: 0.8rem;
+  color: #595d64;
+  flex-shrink: 0;
+}
+.toggle-switch-bg-red {
+  background-color: #fe424d !important;
+  border: 0 !important;
+}
+#sort-select {
+  color: #e03842 !important;
+  font-weight: 600;
+}
+.listing-card {
+  border: none !important;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.card-img-top {
+  transition: transform 0.2s ease-in-out;
+  border-radius: 1rem !important;
+  width: 100% !important;
+  object-fit: cover !important;
+}
+.listing-card:hover .card-img-top {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+.wishlist-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.6rem;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  cursor: pointer;
+  z-index: 1;
+}
+.listing-card:hover .wishlist-icon {
+  opacity: 1;
+}
+.wishlist-icon.is-favorited {
+  color: #fe424d !important;
+  opacity: 1;
+}
+.card-body {
+  padding: 0 !important;
+}
+.card-text p {
+  font-weight: 400 !important;
+}
+.listing-link {
+  text-decoration: none;
+}
+.listing-link {
+  /* This hides the cards initially so they can animate in */
+  opacity: 0;
+  /* Apply the animation */
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* Start 20px below final position */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 554px) {
+  .tax-toggle {
+    display:none;
+  }
+}
+</style>
+
+<div>
+  <div class="header-row">
+    <div class="filters">
+      <div class="filter active" data-filter="all">
+        <div><i class="fa-solid fa-border-all"></i></div>
+        <p>All</p>
+      </div>
+      <div class="filter" data-filter="trending">
+        <div><i class="fa-solid fa-fire"></i></div>
+        <p>Trending</p>
+      </div>
+      <div class="filter" data-filter="amazing_pools">
+        <div><i class="fa-solid fa-person-swimming"></i></div>
+        <p>Amazing Pools</p>
+      </div>
+      <div class="filter" data-filter="iconic_cities">
+        <div><i class="fa-solid fa-mountain-city"></i></div>
+        <p>Iconic Cities</p>
+      </div>
+      <div class="filter" data-filter="mountains">
+        <div><i class="fa-solid fa-mountain"></i></div>
+        <p>Mountains</p>
+      </div>
+      <div class="filter" data-filter="beachfront">
+        <div><i class="fa-solid fa-umbrella-beach"></i></div>
+        <p>Beachfront</p>
+      </div>
+      <div class="filter" data-filter="countryside">
+        <div><i class="fa-solid fa-seedling"></i></div>
+        <p>Countryside</p>
+      </div>
+      <div class="filter" data-filter="arctic">
+        <div><i class="fa-solid fa-snowflake"></i></div>
+        <p>Arctic</p>
+      </div>
+      <div class="filter" data-filter="private_rooms">
+        <div><i class="fa-solid fa-bed"></i></div>
+        <p>Private Rooms</p>
+      </div>
+      <div class="filter" data-filter="castles">
+        <div><i class="fa-solid fa-chess-rook"></i></div>
+        <p>Castles</p>
+      </div>
+      <div class="filter" data-filter="boats">
+        <div><i class="fa-solid fa-ship"></i></div>
+        <p>Boats</p>
+      </div>
+      <div class="filter" data-filter="cabins">
+        <div><i class="fa-solid fa-house-chimney-window"></i></div>
+        <p>Cabins</p>
+      </div>
+      <div class="filter" data-filter="farms">
+        <div><i class="fa-solid fa-cow"></i></div>
+        <p>Farms</p>
+      </div>
+      <div class="filter" data-filter="tiny_homes">
+        <div><i class="fa-solid fa-house-user"></i></div>
+        <p>Tiny Homes</p>
+      </div>
+      <div class="filter" data-filter="luxe">
+        <div><i class="fa-solid fa-gem"></i></div>
+        <p>Luxe</p>
+      </div>
+      <div class="filter" data-filter="off_the_grid">
+        <div><i class="fa-solid fa-tree"></i></div>
+        <p>Off-the-grid</p>
+      </div>
+    </div>
+  </div>
+  <div class="controls-wrapper">
+    <div class="sort-by-container">
+      <label for="sort-select">Sort by:</label>
+      <select name="sort" id="sort-select">
+        <option value="popularity" class="sort-value">Popularity</option>
+        <option value="price_asc" class="sort-value">Price: Low to High</option>
+        <option value="price_desc" class="sort-value">
+          Price: High to Low
+        </option>
+      </select>
+    </div>
+    <div class="tax-toggle">
+      <div class="form-check-reverse form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="switchCheckDefault"
+        />
+        <label class="form-check-label" for="switchCheckDefault"
+          >Display total after taxes</label
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  id="listings-container"
+  class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3"
+>
+  <% for(let i = 0; i < allListings.length; i++) { %>
+    <% let listing = allListings[i]; %>
+    <%
+      let isFavorited = false;
+      if(typeof userWishlist !== 'undefined' && userWishlist) {
+          isFavorited = userWishlist.some(wishlistedId => wishlistedId.equals(listing._id));
+      }
+    %>
+  <a
+    href="/listings/<%= listing._id %>"
+    class="listing-link"
+    data-price="<%= listing.price %>"
+    data-features="<%= JSON.stringify(listing.features || []) %>"
+    data-delay="<%= i * 0.05 %>" 
+  >
+
+    <div class="card col listing-card">
+      <i class="wishlist-icon <%= isFavorited ? 'fa-solid is-favorited' : 'fa-regular' %> fa-heart"  style="color: #ffffff"></i>
+      <img
+        src="<%= listing.image.url %>"
+        class="card-img-top"
+        alt="listing"
+        style="height: 20rem"
+      />
+      
+      <div class="card-body">
+        <p class="card-text">
+          <b><%= listing.title %></b> <br />
+          <small class="text-muted"
+            ><%= listing.location %>, <%= listing.country %></small
+          >
+          <br />
+          &#8377;
+          <span class="price-value" data-original-price="<%= listing.price %>"
+            ><%= listing.price.toLocaleString("en-IN") %></span
+          >
+          <span class="tax-label">&nbsp;including taxes</span>
+          /night
+        </p>
+      </div>
+    </div>
+  </a>
+  <% } %>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const wishlistIcons = document.querySelectorAll(".wishlist-icon");
+
+    wishlistIcons.forEach((icon) => {
+      icon.addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        const listingLink = icon.closest(".listing-link");
+        const listingId = listingLink.getAttribute("href").split("/").pop();
+
+        try {
+          const response = await fetch(`/listings/${listingId}/wishlist`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          // **THE FIX:** Check explicitly for the 401 Unauthorized status.
+          if (response.status === 401) {
+            window.location.href = "/login";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (data.isFavorited) {
+            icon.classList.remove("fa-regular");
+            icon.classList.add("fa-solid", "is-favorited");
+          } else {
+            icon.classList.remove("fa-solid", "is-favorited");
+            icon.classList.add("fa-regular");
+          }
+        } catch (error) {
+          console.error("Error updating wishlist:", error);
+        }
+      });
+    });
+    const animatedLinks = document.querySelectorAll('.listing-link[data-delay]');
+    animatedLinks.forEach(link => {
+        const delay = link.dataset.delay;
+        link.style.animationDelay = `${delay}s`;
+    });
+    // --- Get All Necessary Elements ---
+    const taxSwitch = document.getElementById("switchCheckDefault");
+    const sortSelect = document.getElementById("sort-select");
+    const listingsContainer = document.getElementById("listings-container");
+    const searchInput = document.getElementById("search-input");
+    const filterBtns = document.querySelectorAll(".filters .filter");
+    const originalListings = Array.from(
+      listingsContainer.querySelectorAll(".listing-link")
+    );
+    let activeFilter = "all";
+
+    // --- Main Function to Update Listings (Handles Filter, Search, and Sort) ---
+    function updateDisplayedListings() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const sortBy = sortSelect.value;
+
+      // 1. Filter by Category
+      const categoryFiltered = originalListings.filter((listing) => {
+        if (activeFilter === "all") return true;
+        const features = JSON.parse(listing.dataset.features);
+        return features.includes(activeFilter);
+      });
+
+      // 2. Filter the result of step 1 by Search Term
+      const searchFiltered = categoryFiltered.filter((listing) => {
+        const title = listing.querySelector("b").textContent.toLowerCase();
+        const location = listing
+          .querySelector("small")
+          .textContent.toLowerCase();
+        return title.includes(searchTerm) || location.includes(searchTerm);
+      });
+
+      // 3. Sort the final, filtered results
+      let finalListings;
+      if (sortBy === "popularity") {
+        finalListings = searchFiltered;
+      } else {
+        finalListings = [...searchFiltered].sort((a, b) => {
+          const priceA = parseFloat(a.dataset.price);
+          const priceB = parseFloat(b.dataset.price);
+          return sortBy === "price_asc" ? priceA - priceB : priceB - priceA;
+        });
+      }
+
+      // 4. Render the final list to the page
+      listingsContainer.innerHTML = "";
+      if (finalListings.length > 0) {
+        listingsContainer.style.justifyContent = "";
+        finalListings.forEach((listing) =>
+          listingsContainer.appendChild(listing)
+        );
+      } else {
+        listingsContainer.style.justifyContent = "center";
+        const emptyMessage = `<div class="col-12 text-center mt-5" style="justify-content:center;">
+                        <i class="fa-regular fa-compass fa-3x" style="color: #ddd;"></i>
+                        <h4 class="mt-3">No listings found</h4>
+                        <p class="text-muted">Try adjusting your search or filters to find what you're looking for.</p>
+                      </div>`;
+        listingsContainer.innerHTML = emptyMessage;
+      }
+    }
+
+    // --- Attach Event Listeners ---
+    searchInput.addEventListener("input", updateDisplayedListings);
+    sortSelect.addEventListener("change", updateDisplayedListings);
+
+    // Add event listeners to the filter buttons
+    filterBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter;
+        updateDisplayedListings();
+      });
+    });
+
+    // --- Tax Toggle Functionality (Unchanged) ---
+    taxSwitch.addEventListener("click", () => {
+      for (const listingLink of originalListings) {
+        const priceEl = listingLink.querySelector(".price-value");
+        const taxLabel = listingLink.querySelector(".tax-label");
+        const originalPrice = parseFloat(priceEl.dataset.originalPrice);
+
+        if (taxSwitch.checked) {
+          const priceWithTax = Math.round(originalPrice * 1.18);
+          priceEl.innerText = priceWithTax.toLocaleString("en-IN");
+          taxLabel.style.display = "inline";
+        } else {
+          priceEl.innerText = originalPrice.toLocaleString("en-IN");
+          taxLabel.style.display = "none";
+        }
+      }
+      taxSwitch.classList.toggle("toggle-switch-bg-red");
+    });
+  });
+</script>

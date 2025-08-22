@@ -1,0 +1,206 @@
+<style>
+/* --- CSS Variables for Theming --- */
+:root {
+  --brand-primary: #fe424d;
+  --brand-primary-hover: #e03842;
+  --border-color-light: #dddddd;
+  --text-color-light: #ffffff;
+  --font-weight-bold: 600;
+  --shadow-light: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 3px 8px rgba(0, 0, 0, 0.1);
+  --radius-pill: 40px;
+  --radius-circle: 50%;
+}
+
+/* --- General Navbar Styles --- */
+nav {
+  background-color: #fcfcfc !important;
+  font-family: "Raleway", sans-serif;
+}
+
+.logo {
+  color: var(--brand-primary) !important;
+  font-optical-sizing: auto;
+  font-weight: var(--font-weight-bold);
+  font-size: 1.6rem;
+  margin-left: 1rem;
+}
+
+.logo i {
+  margin-right: 0.5rem;
+}
+
+/* --- Custom Search Bar --- */
+.search-bar {
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.3rem 0.3rem 1rem;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-light);
+  transition: box-shadow 0.2s ease, width 0.3s ease;
+  width: 50rem;
+  max-width: 90%; /* Prevents overflow on smaller viewports */
+}
+
+.search-bar:hover {
+  box-shadow: var(--shadow-medium);
+}
+
+.search-input {
+  border: none !important;
+  box-shadow: none !important;
+  flex-grow: 1;
+  padding: 0.5rem;
+  background-color: transparent;
+}
+
+.search-btn {
+  background-color: var(--brand-primary);
+  color: var(--text-color-light);
+  border-radius: var(--radius-circle);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.search-btn:hover {
+  background-color: var(--brand-primary-hover);
+  color: var(--text-color-light);
+}
+
+/* --- Custom Link Styles --- */
+.nav-link-bah {
+  font-weight: var(--font-weight-bold);
+}
+
+.liked-places-text {
+  color: var(--brand-primary) !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.liked-places-img {
+  width: 1.3rem;
+  height: auto;
+  margin: 0 0.2rem 0.3rem 0;
+}
+
+.nav-link-signup {
+  background-color: var(--brand-primary);
+  color: var(--text-color-light) !important;
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 0.9rem !important;
+  margin-left: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.nav-link-signup:hover {
+  background-color: var(--brand-primary-hover);
+  color: var(--text-color-light) !important;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1480px) {
+  .search-bar {
+    width: 35rem;
+  }
+}
+
+@media (max-width: 1240px) {
+  .search-bar {
+    width: 25rem;
+  }
+  .navbar-nav .nav-link {
+    font-size: 0.9rem;
+  }
+  .logo {
+    font-size: 1.4rem;
+  }
+}
+
+/* UPDATED: Styles for tablets and smaller devices */
+@media (max-width: 1010px) {
+  #searchBar {
+    display: none !important; /* Hides the main search bar */
+  }
+
+}
+@media (max-width: 767px) {
+  /* Center links when navbar is collapsed */
+  .navbar-collapse {
+    text-align: center;
+    /* --- ADD THESE STYLES --- */
+    background-color: #fcfcfc; /* This fixes the transparency */
+    padding: 1rem; /* Adds spacing inside the drawer */
+    margin-top: 0.5rem; /* Adds space between navbar and drawer */
+    border-radius: 0.5rem; /* Softens the corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Lifts the drawer off the page */
+  }
+  /* ... other rules ... */
+}
+
+.navbox{
+  padding: 0 !important;
+}
+.navbar-toggler{
+  margin-right: 1rem;
+}
+</style>
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+  <div class="container-fluid navbox">
+    <a class="navbar-brand logo" href="/listings">
+      <i class="fa-solid fa-plane-departure"></i> OnlyWander
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <form id="searchBar"
+        class="d-flex search-bar mx-auto"
+        role="search"
+        onsubmit="return false;"
+      >
+        <input
+          id="search-input"
+          class="form-control search-input"
+          type="search"
+          placeholder="Search destinations"
+          aria-label="Search"
+        />
+        <button class="btn search-btn" type="button">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link nav-link-bah" href="/listings/new">Join our hosts</a>
+        <% if(currUser && currUser.role === 'admin') { %>
+        <a class="nav-link" href="/admin"><b>Admin Panel</b></a>
+        <% } %> <% if(!currUser){ %>
+        <a class="nav-link" href="/login"><b>Log in</b></a>
+        <a class="nav-link nav-link-signup" href="/signup"><b>Sign up</b></a>
+        <% }else{ %>
+        <a class="nav-link liked-places-text" href="/wishlist"
+          ><img
+            src="/images/liked2.png"
+            alt="liked places"
+            class="liked-places-img"
+          />Wishlist</a
+        >
+        <a class="nav-link" href="/logout"><b>Logout</b></a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,49 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    .not-ready-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 60vh;
+        padding: 2rem;
+    }
+    .not-ready-container .icon {
+        font-size: 5rem;
+        color: #fe424d;
+        margin-bottom: 1.5rem;
+    }
+    .not-ready-container h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .not-ready-container p {
+        color: #6c757d;
+        max-width: 450px;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+    .not-ready-container .home-btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background-color: #212529;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+    .not-ready-container .home-btn:hover {
+        background-color: #343a40;
+    }
+</style>
+
+<div class="not-ready-container">
+    <div class="icon">
+        <i class="fa-solid fa-person-digging"></i>
+    </div>
+    <h1>Page Under Construction</h1>
+    <p>We're working hard to bring this page to you soon. Thanks for your patience!</p>
+    <a href="/listings" class="home-btn">Go Back to Homepage</a>
+</div>

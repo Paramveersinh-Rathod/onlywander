@@ -1,0 +1,215 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  /* --- (All your existing CSS remains unchanged) --- */
+  .wishlist-header {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ebebeb;
+  }
+  .wishlist-header h1 {
+    font-weight: 700;
+    color: #222;
+  }
+  .wishlist-header .fa-heart-circle-check {
+    color: #fe424d;
+    margin-right: 0.5rem;
+  }
+  .wishlist-header p {
+    font-size: 1.1rem;
+    color: #717171;
+    margin-top: 0.5rem;
+  }
+  .empty-wishlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1rem;
+    min-height: 50vh;
+  }
+  .empty-wishlist-container .empty-icon {
+    font-size: 5rem;
+    color: #dddddd;
+    margin-bottom: 1.5rem;
+  }
+  .empty-wishlist-container h2 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .empty-wishlist-container p {
+    color: #717171;
+    max-width: 400px;
+    margin-bottom: 2rem;
+  }
+  .empty-wishlist-container .explore-btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+  .listing-card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 100%;
+  }
+  .listing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+  .listing-card .card-img-top {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    height: 20rem;
+    object-fit: cover;
+  }
+  .listing-card .card-body {
+    padding: 1rem 1.25rem;
+  }
+  .listing-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  .remove-wishlist-form {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+  }
+  .remove-wishlist-btn {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    text-decoration: none;
+    border: none;
+    backdrop-filter: blur(4px);
+  }
+  .remove-wishlist-btn i {
+    color: #222;
+    font-size: 1.2rem;
+    transition: transform 0.2s ease;
+  }
+  .remove-wishlist-btn:hover i {
+    transform: scale(1.2);
+    color: #fe424d;
+  }
+  #wishlist-container{
+    justify-content: center;
+  }
+</style>
+
+<div class="wishlist-header">
+  <h1><i class="fa-solid fa-heart-circle-check"></i> Your Wishlist</h1>
+  <p>All your saved places in one spot.</p>
+</div>
+
+<div
+  id="wishlist-container"
+  class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3"
+>
+  <% if(wishlist && wishlist.length > 0) { %> <% for(let listing of wishlist) {
+  %>
+  <div class="col mb-4">
+    <div class="card listing-card">
+      <form
+        class="remove-wishlist-form"
+        method="POST"
+        action="/listings/<%= listing._id %>/wishlist"
+      >
+        <button
+          type="submit"
+          class="btn btn-link remove-wishlist-btn"
+          title="Remove from wishlist"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <a href="/listings/<%= listing._id %>" class="listing-link">
+        <img
+          src="<%= listing.image.url %>"
+          class="card-img-top"
+          alt="listing image"
+        />
+        <div class="card-body">
+          <h5 class="card-title" style="font-weight: 600">
+            <%= listing.title %>
+          </h5>
+          <p class="card-text text-muted mb-1">
+            <%= listing.location %>, <%= listing.country %>
+          </p>
+          <p class="card-text mt-2">
+            <b>&#8377;<%= listing.price.toLocaleString("en-IN") %></b> / night
+          </p>
+        </div>
+      </a>
+    </div>
+  </div>
+  <% } %> <% } else { %>
+  <div class="empty-wishlist-container">
+    <i class="fa-regular fa-heart empty-icon"></i>
+    <h2>Your wishlist is empty</h2>
+    <p>
+      As you browse, tap the heart on any listing to save it here for later.
+    </p>
+    <a href="/listings" class="btn btn-dark explore-btn">Start Exploring</a>
+  </div>
+  <% } %>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const removeForms = document.querySelectorAll(".remove-wishlist-form");
+
+    removeForms.forEach((form) => {
+      form.addEventListener("submit", async (event) => {
+        // Step 1: Stop the default form submission (which causes the redirect)
+        event.preventDefault();
+
+        const url = form.action;
+        const cardContainer = form.closest(".col.mb-4");
+
+        try {
+          // Step 2: Send a background request, just like the index page does
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          if (!response.ok) throw new Error("Failed to remove item.");
+
+          const data = await response.json();
+
+          // Step 3: If the server confirms removal, remove the card from the page instantly
+          if (data.isFavorited === false) {
+            cardContainer.style.transition = "opacity 0.4s ease";
+            cardContainer.style.opacity = "0";
+            setTimeout(() => {
+              cardContainer.remove();
+              // Optional: Show an empty message if the last item is removed
+              if (document.querySelectorAll(".col.mb-4").length === 0) {
+                const container = document.getElementById("wishlist-container");
+                const emptyMessage = `<div class="empty-wishlist-container" style="width: 100%;">
+                                                    <i class="fa-regular fa-heart empty-icon"></i>
+                                                    <h2>Your wishlist is empty</h2>
+                                                    <p>As you browse, tap the heart on any listing to save it here for later.</p>
+                                                    <a href="/listings" class="btn btn-dark explore-btn">Start Exploring</a>
+                                                  </div>`;
+                container.innerHTML = emptyMessage;
+              }
+            }, 400);
+          }
+        } catch (error) {
+          console.error("Error removing from wishlist:", error);
+        }
+      });
+    });
+  });
+</script>

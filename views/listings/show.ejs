@@ -1,0 +1,392 @@
+<% layout("/layouts/boilerplate") %>
+<script>
+    const mapToken = "<%= process.env.MAP_TOKEN%>";
+    const listing = <%-JSON.stringify(listing) %>;
+</script>
+
+<!-- Add Flatpickr for date selection -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+    body {
+        background-color: #f7f7f7;
+    }
+    .content-container {
+        background-color: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .listing-title {
+        font-weight: 700;
+        font-size: 2.25rem;
+    }
+    .listing-meta {
+        font-size: 1.1rem;
+        color: #717171;
+        margin-bottom: 1.5rem;
+    }
+    .listing-image {
+        width: 100%;
+        height: 65vh;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+    .section-header {
+        font-weight: 600;
+        font-size: 1.5rem;
+        border-bottom: 2px solid #f3f3f3;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .owner-info {
+        font-weight: 500;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .info-item i {
+        font-size: 1.2rem;
+        color: #fe424d;
+        margin-right: 1rem;
+        width: 25px;
+        text-align: center;
+    }
+
+    /* Booking Widget */
+    .booking-widget {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 1.5rem;
+        position: sticky;
+        top: 100px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+    .booking-price {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    .booking-price span {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #717171;
+    }
+    .booking-btn {
+        width: 100%;
+        background-color: #fe424d;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+    .booking-btn:hover {
+        background-color: #e03842;
+        color: white;
+    }
+
+    /* --- REVIEW SECTION STYLES --- */
+    .reviews-header {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+    .reviews-header .fa-star {
+        color: #ffc107; /* Gold color for the star */
+    }
+    .review-card {
+        border-bottom: 1px solid #ebebeb;
+        padding: 1.5rem 0;
+    }
+    .review-card:last-of-type {
+        border-bottom: none;
+    }
+    .review-author-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .review-author-info .author-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #343a40;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 600;
+        margin-right: 1rem;
+    }
+    .review-author-details .author-name {
+        font-weight: 600;
+        margin: 0;
+    }
+    .review-author-details .review-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin: 0;
+    }
+    .review-form-container {
+        background-color: #fafafa;
+        padding: 2rem;
+        border-radius: 12px;
+        height: 100%; /* Make form container take full height of its column */
+    }
+    /* Remove outline on star rating focus */
+    .starability-basic > input:focus + label {
+        outline: none;
+    }
+    /* ---------------------------------- */
+
+    /* Map */
+    #map {
+        height: 400px;
+        border-radius: 12px;
+    }
+
+    /* --- RESPONSIVENESS --- */
+    @media (max-width: 768px) {
+        .content-container {
+            padding: 1.5rem;
+        }
+        .listing-title {
+            font-size: 1.75rem;
+        }
+        .listing-image {
+            height: 40vh; /* Adjust image height on mobile */
+        }
+        .reviews-header {
+            font-size: 1.5rem;
+        }
+        #map{
+            height: 300px;
+            width: auto;
+        }
+    }
+    @media (max-width: 1400px) {
+        #map{
+            height: 500px;
+            width: auto;
+        }
+    }
+</style>
+
+<div class="row mt-4 mb-5">
+    <div class="col-lg-8">
+        <div class="content-container">
+            <h1 class="listing-title"><%= listing.title %></h1>
+            <p class="listing-meta"><%= listing.location %>, <%= listing.country %></p>
+            <img src="<%= listing.image.url %>" class="listing-image" alt="<%= listing.title %>">
+
+            <h2 class="section-header">Hosted by <span class="owner-info"><%= listing.owner.username %></span></h2>
+            <p><%= listing.description %></p>
+            <hr class="my-4">
+
+            <h2 class="section-header">Features</h2>
+            <div class="row row-cols-md-2">
+                <div class="col info-item"><i class="fa-solid fa-indian-rupee-sign"></i> <span><b><%= listing.price.toLocaleString("en-IN") %></b> / night</span></div>
+                <% if(listing.features && listing.features.length) { %>
+                    <% for(let feature of listing.features) { %>
+                        <div class="col info-item"><i class="fa-solid fa-star"></i> <span><%= feature.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) %></span></div>
+                    <% } %>
+                <% } %>
+            </div>
+            <hr class="my-4">
+
+            <h2 class="section-header">Where you'll be</h2>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="booking-widget">
+            <h4 class="booking-price">&#8377;<%= listing.price.toLocaleString("en-IN") %> <span>/ night</span></h4>
+            <hr>
+            
+            <% if (currUser) { %>
+                <div id="booking-prompt">
+                    <p class="text-muted small">Ready to book? Fill out your details to send a request to the host.</p>
+                    <button id="showBookingFormBtn" class="btn booking-btn">Request to Book</button>
+                </div>
+
+                <form id="bookingForm" action="/listings/<%= listing._id %>/book" method="POST" class="needs-validation" novalidate style="display: none;">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="checkin" class="form-label">Check-in & Check-out</label>
+                            <input type="text" id="checkin" name="checkin" class="form-control" required placeholder="Select date range">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="guests" class="form-label">Number of Guests</label>
+                        <input type="number" id="guests" name="guests" class="form-control" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact" class="form-label">Your Contact Number</label>
+                        <input type="tel" id="contact" name="contact" class="form-control" required placeholder="e.g., +91 98765 43210">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message to Host (optional)</label>
+                        <textarea id="message" name="message" rows="3" class="form-control" placeholder="Any special requests or questions?"></textarea>
+                    </div>
+                    <button type="submit" class="btn booking-btn w-100">Send Booking Request</button>
+                </form>
+            <% } else { %>
+                <p class="text-muted small">You must be logged in to send a booking request.</p>
+                <a href="/login" class="btn booking-btn">Log in to Book</a>
+            <% } %>
+
+            <% if( currUser && currUser._id.equals(listing.owner._id)) { %>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark w-50 me-1">Edit</a>
+                    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="w-50 ms-1 form-with-loader"><button class="btn btn-danger w-100">Delete</button></form>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="content-container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="reviews-header mb-0">
+                    <i class="fa-solid fa-star"></i> 
+                    <%= averageRating %> &middot; <%= totalReviews %> Review<%= totalReviews !== 1 ? 's' : '' %>
+                </h2>
+                <% if(totalReviews > 1) { %>
+                    <div class="col-auto">
+                        <select class="form-select form-select-sm" id="reviewSort">
+                            <option value="newest" selected>Sort by: Newest</option>
+                            <option value="oldest">Sort by: Oldest</option>
+                            <option value="highest">Sort by: Highest Rating</option>
+                            <option value="lowest">Sort by: Lowest Rating</option>
+                        </select>
+                    </div>
+                <% } %>
+            </div>
+            <hr>
+            <div class="row">
+                <% if(currUser) { %>
+                    <div class="col-md-5 mb-4 mb-md-0 d-flex">
+                        <div class="review-form-container flex-grow-1">
+                            <h4>Leave a Review</h4>
+                            <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation form-with-loader">
+                                <div class="mb-3"><fieldset class="starability-basic"><input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." /><input type="radio" id="first-rate1" name="review[rating]" value="1" /><label for="first-rate1" title="Terrible">1 star</label><input type="radio" id="first-rate2" name="review[rating]" value="2" /><label for="first-rate2" title="Not good">2 stars</label><input type="radio" id="first-rate3" name="review[rating]" value="3" /><label for="first-rate3" title="Average">3 stars</label><input type="radio" id="first-rate4" name="review[rating]" value="4" /><label for="first-rate4" title="Very good">4 stars</label><input type="radio" id="first-rate5" name="review[rating]" value="5" /><label for="first-rate5" title="Amazing">5 stars</label></fieldset></div>
+                                <div class="mb-3"><textarea name="review[comment]" rows="3" class="form-control" placeholder="Share your experience..." required></textarea><div class="invalid-feedback">A comment is required.</div></div>
+                                <button class="btn btn-dark">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+
+                <div class="col-md-7">
+                    <div id="reviews-container">
+                        <% if(listing.reviews && listing.reviews.length) { %>
+                            <% for(review of listing.reviews) { %>
+                                <div class="review-card" data-rating="<%= review.rating %>" data-date="<%= review.createdAt %>">
+                                    <div class="review-author-info">
+                                        <div class="author-avatar"><%= review.author.username.charAt(0).toUpperCase() %></div>
+                                        <div class="review-author-details">
+                                            <p class="author-name">@<%= review.author.username %></p>
+                                            <p class="review-date"><%= new Date(review.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                                        </div>
+                                    </div>
+                                    <p class="starability-result card-text mt-2" data-rating="<%= review.rating %>"></p>
+                                    <p class="card-text mt-2"><%= review.comment %></p>
+                                    <% if(currUser && currUser._id.equals(review.author._id)) { %>
+                                        <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" class="form-with-loader mt-2">
+                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <p>No reviews yet. Be the first to leave one!</p>
+                        <% } %>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <% if (totalReviewPages > 1) { %>
+                        <nav aria-label="Review page navigation" class="mt-4">
+                            <ul class="pagination">
+                                <% if (currentReviewPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/listings/<%= listing._id %>?page=<%= currentReviewPage - 1 %>" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                <% } %>
+                                <% for (let i = 1; i <= totalReviewPages; i++) { %>
+                                    <li class="page-item <%= i === currentReviewPage ? 'active' : '' %>">
+                                        <a class="page-link" href="/listings/<%= listing._id %>?page=<%= i %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentReviewPage < totalReviewPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/listings/<%= listing._id %>?page=<%= currentReviewPage + 1 %>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/map.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr("#checkin", {
+            mode: "range",
+            minDate: "today",
+            dateFormat: "d-m-Y",
+        });
+
+        const showBookingFormBtn = document.getElementById('showBookingFormBtn');
+        const bookingForm = document.getElementById('bookingForm');
+        const bookingPrompt = document.getElementById('booking-prompt');
+
+        if (showBookingFormBtn) {
+            showBookingFormBtn.addEventListener('click', () => {
+                bookingPrompt.style.display = 'none';
+                bookingForm.style.display = 'block';
+            });
+        }
+
+        // Review Sorting Logic
+        const reviewSort = document.getElementById('reviewSort');
+        const reviewsContainer = document.getElementById('reviews-container');
+
+        if (reviewSort) {
+            reviewSort.addEventListener('change', (e) => {
+                const sortBy = e.target.value;
+                const reviews = Array.from(reviewsContainer.querySelectorAll('.review-card'));
+
+                reviews.sort((a, b) => {
+                    if (sortBy === 'newest') {
+                        return new Date(b.dataset.date) - new Date(a.dataset.date);
+                    } else if (sortBy === 'oldest') {
+                        return new Date(a.dataset.date) - new Date(b.dataset.date);
+                    } else if (sortBy === 'highest') {
+                        return b.dataset.rating - a.dataset.rating;
+                    } else if (sortBy === 'lowest') {
+                        return a.dataset.rating - b.dataset.rating;
+                    }
+                });
+
+                // Clear and re-append sorted reviews
+                reviewsContainer.innerHTML = '';
+                reviews.forEach(review => reviewsContainer.appendChild(review));
+            });
+        }
+    });
+</script>

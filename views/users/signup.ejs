@@ -1,0 +1,309 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    /* We only use custom CSS for aesthetics, not layout */
+    body {
+        background-color: #f8f9fa; /* Light grey background */
+    }
+
+    .signup-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Important for the border-radius on the image */
+        margin: 2rem 0 4rem 0;
+    }
+
+    .branding-panel {
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1470&auto-format=fit=crop');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 2rem;
+    }
+    
+    .branding-panel .logo {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 700;
+        font-size: 2.2rem;
+    }
+
+    .form-panel {
+        padding: 3rem;
+    }
+
+    .form-panel h2 {
+        font-weight: 700;
+        color: #343a40;
+    }
+
+    .form-panel .sub-heading {
+        color: #6c757d;
+        margin-bottom: 2rem;
+    }
+    
+    .form-floating .form-control {
+        height: calc(3.5rem + 2px);
+    }
+    
+    /* Adjust input group for floating labels */
+    .input-group .form-floating {
+        flex: 1 1 auto;
+    }
+
+    /* --- NEW BUTTON STYLES --- */
+    #password-toggle {
+        border-color: #ced4da; /* Match input border color */
+        border-left: 0;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        width: 50px; /* Fixed width for the button */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #password-toggle:hover {
+        background-color: #fe424d;
+        border-color: #fe424d;
+    }
+
+    #password-toggle:hover i {
+        color: white;
+    }
+    /* -------------------------- */
+
+    .btn-brand {
+        background-color: #fe424d;
+        border: none;
+        color: white;
+        padding: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .btn-brand:hover {
+        background-color: #e03842;
+        color: white;
+    }
+
+    .login-link a {
+        color: #fe424d;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .invalid-feedback {
+        font-weight: 500;
+    }
+
+    /* --- NEW ANIMATION STYLES --- */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-on-load {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+    /* ------------------------------ */
+</style>
+
+<div class="row d-flex justify-content-center align-items-center min-vh-100 m-0">
+    <div class="col-lg-10 col-xl-9">
+        <div class="card signup-card animate-on-load">
+            <div class="row g-0">
+
+                <div class="col-md-5 d-none d-md-flex align-items-center justify-content-center branding-panel">
+                    <div class="text-center">
+                        <h1 class="logo mb-3"><i class="fa-solid fa-plane-departure"></i> OnlyWander</h1>
+                        <p class="lead">Your next great adventure is just a few clicks away. Join our community of explorers today!</p>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="form-panel">
+                        <h2>Create Your Account</h2>
+                        <p class="sub-heading">Join our community of explorers today!</p>
+                        
+                        <form id="signupForm" action="/signup" method="POST" class="needs-validation form-with-loader" novalidate>
+                            <div class="form-floating mb-3">
+                                <input 
+                                    type="text" 
+                                    id="username" 
+                                    name="username" 
+                                    class="form-control" 
+                                    placeholder="Username" 
+                                    required
+                                    maxlength="20"
+                                    pattern="[a-zA-Z0-9_.]{3,20}"
+                                    title="Username must be 3-20 characters long and can only contain letters, numbers, underscores, and periods.">
+                                <label for="username"><i class="fa-solid fa-user me-2"></i>Username</label>
+                                <div class="invalid-feedback">
+                                    Username must be 3-20 characters (letters, numbers, _, .).
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-control" 
+                                    placeholder="Email" 
+                                    required>
+                                <label for="email"><i class="fa-solid fa-envelope me-2"></i>Email</label>
+                                <div class="invalid-feedback">
+                                    Please provide a valid email address.
+                                </div>
+                            </div>
+
+                            <div class="input-group has-validation mb-3">
+                                <div class="form-floating">
+                                    <input 
+                                        type="password" 
+                                        id="password" 
+                                        name="password" 
+                                        class="form-control" 
+                                        placeholder="Password" 
+                                        required
+                                        minlength="8"
+                                        pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                        title="Password must be at least 8 characters long and include at least one letter, one number, and one special character.">
+                                    <label for="password"><i class="fa-solid fa-lock me-2"></i>Password</label>
+                                </div>
+                                <button class="btn btn-outline-secondary" type="button" id="password-toggle">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <div class="invalid-feedback">
+                                    Password must be 8+ characters with a letter, number, and special character.
+                                </div>
+                            </div>
+
+                            <div id="feedback" class="form-text mb-3"></div>
+                            
+                            <div id="otpField" class="form-floating mb-3" style="display: none;">
+                                <input type="text" id="otp" name="otp" class="form-control" placeholder="123456" maxlength="6" pattern="\d{6}">
+                                <label for="otp"><i class="fa-solid fa-key me-2"></i>Enter 6-Digit OTP</label>
+                                <div class="invalid-feedback">A 6-digit OTP is required.</div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="button" id="verifyBtn" class="btn btn-brand">VERIFY EMAIL</button>
+                                <button id="signupBtn" type="submit" class="btn btn-brand" style="display: none;">CREATE ACCOUNT</button>
+                            </div>
+
+                            <p class="text-center mt-4 login-link">
+                                Already have an account? <a href="/login">Log in</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const verifyBtn = document.getElementById('verifyBtn');
+    const signupForm = document.getElementById('signupForm');
+    const feedbackDiv = document.getElementById('feedback');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const otpField = document.getElementById('otpField');
+    const signupBtn = document.getElementById('signupBtn');
+    const otpInput = document.getElementById('otp');
+    const passwordToggle = document.getElementById('password-toggle'); 
+    const loadingOverlay = document.getElementById('loading-overlay'); 
+
+    passwordToggle.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        const icon = passwordToggle.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+
+    verifyBtn.addEventListener('click', async () => {
+        feedbackDiv.textContent = ''; 
+        if (!signupForm.checkValidity()) {
+            signupForm.classList.add('was-validated');
+            return; 
+        }
+        signupForm.classList.remove('was-validated');
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> SENDING...';
+        try {
+            const response = await fetch('/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: usernameInput.value,
+                    email: emailInput.value
+                })
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'An error occurred.');
+            }
+            feedbackDiv.textContent = data.message;
+            feedbackDiv.style.color = 'green';
+            usernameInput.readOnly = true;
+            emailInput.readOnly = true;
+            passwordInput.readOnly = true;
+            passwordToggle.disabled = true; 
+            otpField.style.display = 'block';
+            otpInput.required = true; 
+            signupBtn.style.display = 'block';
+            verifyBtn.style.display = 'none';
+        } catch (error) {
+            feedbackDiv.textContent = error.message;
+            feedbackDiv.style.color = 'red';
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = 'VERIFY EMAIL';
+        }
+    });
+
+    signupForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!signupForm.checkValidity()) {
+            signupForm.classList.add('was-validated');
+            return;
+        }
+        signupBtn.disabled = true;
+        signupBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> CREATING ACCOUNT...';
+        feedbackDiv.textContent = '';
+        const formData = new FormData(signupForm);
+        const data = Object.fromEntries(formData.entries());
+        try {
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.message || 'An error occurred during signup.');
+            }
+            window.location.href = result.redirectUrl;
+        } catch (error)
+        {
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+            feedbackDiv.textContent = error.message;
+            feedbackDiv.style.color = 'red';
+            signupBtn.disabled = false;
+            signupBtn.innerHTML = 'CREATE ACCOUNT';
+            otpInput.value = '';
+            otpInput.focus();
+        }
+    });
+});
+</script>
