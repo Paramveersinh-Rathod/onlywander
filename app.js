@@ -10,6 +10,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const MongoStore = require('connect-mongo'); // 1. REQUIRE MONGOSTORE
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -89,7 +90,22 @@ app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")))
 app.use(express.json());
 
+// 2. CONFIGURE THE STORE
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: secret,
+    },
+    touchAfter: 24 * 3600 // time period in seconds
+});
+
+store.on("error", (err) => {
+    console.log("ERROR in MONGO SESSION STORE", err);
+});
+
+// 3. USE THE STORE IN YOUR SESSION
 const sessionOption = {
+    store,
     secret,
     resave: false,
     saveUninitialized: true,
