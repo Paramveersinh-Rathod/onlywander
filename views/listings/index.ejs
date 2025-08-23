@@ -138,7 +138,7 @@
   opacity: 1;
 }
 .card-body {
-  padding: 0 !important;
+  padding: 0.7rem 0 0 0 !important;
 }
 .card-text p {
   font-weight: 400 !important;
@@ -168,6 +168,76 @@
   .tax-toggle {
     display:none;
   }
+}
+.sort-dropdown-container {
+    position: relative;
+    cursor: pointer;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+    height: 3.15rem;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    width: 260px; /* Increased width */
+}
+
+.sort-dropdown-header span {
+    white-space: nowrap; /* Prevents header text from wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sort-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    color: #595d64;
+}
+
+.sort-dropdown-header #selected-sort {
+    color: #fe424d; /* Brand color for selected option */
+    font-weight: 600;
+}
+
+.sort-dropdown-header i {
+    transition: transform 0.3s ease;
+}
+
+.sort-dropdown-container.open .sort-dropdown-header i {
+    transform: rotate(180deg);
+}
+
+.sort-dropdown-body {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    z-index: 10;
+    overflow: hidden;
+    max-height: 0; /* Hidden by default */
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+
+.sort-dropdown-container.open .sort-dropdown-body {
+    max-height: 200px; /* Animate to this height */
+    opacity: 1;
+}
+
+.sort-option {
+    padding: 0.8rem 1rem;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+}
+
+.sort-option:hover {
+    background-color: #f8f9fa; /* Light grey on hover */
 }
 </style>
 
@@ -241,16 +311,22 @@
     </div>
   </div>
   <div class="controls-wrapper">
-    <div class="sort-by-container">
-      <label for="sort-select">Sort by:</label>
-      <select name="sort" id="sort-select">
-        <option value="popularity" class="sort-value">Popularity</option>
-        <option value="price_asc" class="sort-value">Price: Low to High</option>
-        <option value="price_desc" class="sort-value">
-          Price: High to Low
-        </option>
-      </select>
+    <div class="sort-dropdown-container">
+    <div class="sort-dropdown-header">
+        <span>Sort by: <b id="selected-sort">Popularity</b></span>
+        <i class="fa-solid fa-chevron-down"></i>
     </div>
+    <div class="sort-dropdown-body">
+        <div class="sort-option" data-value="popularity">Popularity</div>
+        <div class="sort-option" data-value="price_asc">Price: Low to High</div>
+        <div class="sort-option" data-value="price_desc">Price: High to Low</div>
+    </div>
+  </div>
+  <select name="sort" id="sort-select" style="display: none;">
+      <option value="popularity"></option>
+      <option value="price_asc"></option>
+      <option value="price_desc"></option>
+  </select>
     <div class="tax-toggle">
       <div class="form-check-reverse form-switch">
         <input
@@ -457,5 +533,42 @@
       }
       taxSwitch.classList.toggle("toggle-switch-bg-red");
     });
+    // --- SCRIPT FOR CUSTOM SORT DROPDOWN ---
+const dropdownContainer = document.querySelector('.sort-dropdown-container');
+const dropdownHeader = document.querySelector('.sort-dropdown-header');
+const dropdownBody = document.querySelector('.sort-dropdown-body');
+const sortOptions = document.querySelectorAll('.sort-option');
+const selectedSort = document.getElementById('selected-sort');
+const hiddenSelect = document.getElementById('sort-select');
+
+if(dropdownHeader) {
+    dropdownHeader.addEventListener('click', () => {
+        dropdownContainer.classList.toggle('open');
+    });
+
+    sortOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Update the visible text
+            selectedSort.textContent = option.textContent;
+            
+            // Update the hidden select element for functionality
+            hiddenSelect.value = option.dataset.value;
+
+            // Trigger the change event on the hidden select to update listings
+            const changeEvent = new Event('change');
+            hiddenSelect.dispatchEvent(changeEvent);
+
+            // Close the dropdown
+            dropdownContainer.classList.remove('open');
+        });
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', (e) => {
+        if (!dropdownContainer.contains(e.target)) {
+            dropdownContainer.classList.remove('open');
+        }
+    });
+}
   });
 </script>
